@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(pwd)"
+
+for required in README.md Makefile scripts/build_all.sh src dist; do
+  if [[ ! -e "$required" ]]; then
+    echo "Expected repo item missing: $required" >&2
+    echo "Run this from the repository root." >&2
+    exit 1
+  fi
+done
+
+echo "Updating README.md and Makefile..."
+
+python3 <<'PY'
+from pathlib import Path
+import re
+
+readme = Path("README.md")
+makefile = Path("Makefile")
+
+if readme.exists():
+    text = readme.read_text(encoding="utf-8")
+
+    # Remove obvious old working-label language if present
+    text = text.replace(
+        "This repository is the dev-ready LaTeX workspace for the book project.",
+        "This repository contains the LuaLaTeX source for *The Gospel According to Tony Day*."
+    )
+    text = text.replace(
+        "This repository is the LaTeX workspace for the book project.",
+        "This repository contains the LuaLaTeX source for *The Gospel According to Tony Day*."
+    )
+    text = text.replace("Legacy Book", "book")
+    text = text.replace("legacy work", "work")
+    text = text.replace("legacy", "project")
+
+    # Tidy a heading if it exists
+    text = text.replace("## Build", "## Build and output")
+
+    # Ensure this note exists once
+    reading_note = (
+        "## Reading format\n\n"
+        "This book was composed for facing-page reading.\n\n"
+        "If reading the PDF digitally, the intended experience is in two-page view, "
+        "with the cover shown separately where supported. Spacing, silence, and page "
+        "relationships were designed with the spread in mind.\n"
+    )
+
+    if "## Reading format" not in text:
+        if "## Editions" in text:
+            text = text.replace("## Editions", reading_note + "\n## Editions", 1)
+        elif "## Build and output" in text:
+            text = text.replace("## Build and output", reading_note + "\n## Build and output", 1)
+        else:
+            text = text.rstrip() + "\n\n" + reading_note + "\n"
+
+    # Ensure output note exists once
+    output_note = "Final PDFs are written to `dist/`."
+    if output_note not in text:
+        if "Manual one-off build:" in text:
+            text = text.replace("Manual one-off build:", output_note + "\n\nManual one-off build:", 1)
+        else:
+            text = text.rstrip() + "\n\n" + output_note + "\n"
+
+    readme.write_text(text, encoding="utf-8")
+
+makefile.write_text(
+""".DEFAULT_GOAL := all
+.PHONY: all clean distclean
+
+all:
+\tbash scripts/build_all.sh
+
+clean:
+\trm -rf build
+
+distclean: clean
+\trm -f dist/*.pdf
+""",
+encoding="utf-8"
+)
+PY
+
+echo "Fixing LICENSE.txt typo if present..."
+python3 <<'PY'
+from pathlib import Path
+
+p = Path("LICENSE.txt")
+if p.exists():
+    text = p.read_text(encoding="utf-8")
+    if text.startswith("reative Commons"):
+        text = "C" + text
+        p.write_text(text, encoding="utf-8")
+PY
+
+echo "Removing common junk/artifact files..."
+rm -rf .vscode build __MACOSX
+find . -name '.DS_Store' -delete
+rm -f src.zip "src 2.zip" "src 3.zip"
+
+echo
+echo "Done."
+echo "Next:"
+echo "  make distclean"
+echo "  make all"

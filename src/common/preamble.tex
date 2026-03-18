@@ -1,0 +1,158 @@
+\documentclass[12pt,twoside,openright]{book}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \errmessage{This project now requires LuaLaTeX or XeLaTeX. Use `make all` or `latexmk -lualatex`.}
+\fi
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{ifthen}
+\usepackage{fontspec}
+\usepackage{varwidth}
+\defaultfontfeatures{Ligatures=TeX}
+\usepackage{graphicx}
+
+% 6x9 trim size (adjust later)
+\geometry{paperwidth=6in,paperheight=9in,inner=0.9in,outer=0.7in,top=0.8in,bottom=0.9in}
+
+% Minimal, restrained page style
+\pagestyle{empty}
+
+% Edition switch (single source of truth)
+\newif\ifnotesedition
+
+\newcommand{\AphorismBody}[2]{%
+  \vspace*{\fill}
+  \begin{center}
+    \begin{varwidth}{0.8\textwidth}
+      \centering
+      {\large\itshape #1\par}
+      \vspace{0.25\baselineskip}
+      {\normalfont\small\raggedleft --- #2\par}
+    \end{varwidth}
+  \end{center}
+  \vspace*{\fill}
+}
+
+\newcommand{\AphorismPair}[2]{%
+  \vspace*{\fill}
+  \begin{center}
+    {\small\itshape
+    \begin{tabular}{@{}l@{}}
+      #1\\[0.15\baselineskip]
+      \hspace*{1.5em}\textemdash\thinspace #2
+    \end{tabular}\par}
+  \end{center}
+  \vspace*{\fill}
+}
+
+% Homely old-school paperback reminiscence 
+\newenvironment{OldSchoolEssay}
+  {\begingroup\setlength{\parindent}{1.5em}\setlength{\parskip}{0.6\baselineskip}}
+  {\par\endgroup}
+
+\newenvironment{poem}
+  {\par\begingroup\raggedright\setlength{\parindent}{0pt}\setlength{\parskip}{0pt}}
+  {\par\endgroup}
+
+\newenvironment{stanza}
+  {\par\addvspace{0.9\baselineskip}%
+   \begin{samepage}%
+   \parindent=0pt\noindent\ignorespaces}
+  {\par\end{samepage}}
+
+\newcommand{\VLabel}[1]{\textbf{#1}}
+
+% --- Helpers ---
+\newcommand{\VersoTriplet}[3]{%
+  \thispagestyle{empty}%
+  \vspace*{\fill}
+  \begin{center}
+    \begin{varwidth}{0.78\textwidth}
+      \raggedright\small
+      \setlength{\parskip}{0.16\baselineskip}
+      \setlength{\parindent}{0pt}
+      #1\par
+      #2\par
+      #3\par
+    \end{varwidth}
+  \end{center}
+  \vspace*{\fill}
+  \clearpage
+}
+
+\newcommand{\WorkTitle}[1]{%
+  \begin{center}
+  \large #1
+  \end{center}
+  \vspace{1.2\baselineskip}
+}
+
+\newcommand{\Attribution}[1]{%
+  \vspace{1.2\baselineskip}
+  \begin{flushright}
+  {\small #1}
+  \end{flushright}
+}
+
+% One record, two views:
+% - Always: recto = work
+% - Decoded edition: verso = 3-line guide
+% - Default edition: verso = blank
+\newcommand{\WorkEntry}[6]{% id, title, body, lens, link, question
+  \clearpage
+  \ifnotesedition
+    \VersoTriplet{#4}{#5}{#6}
+  \else
+    \BlankVerso
+  \fi
+  \cleardoublepage
+  \thispagestyle{empty}
+  \begin{flushleft}\setlength{\parindent}{0pt}
+  \ifthenelse{\equal{#2}{}}{}{\WorkTitle{#2}}
+  #3
+  \end{flushleft}
+}
+
+% Page 1 directive: tiny serif word, dead centre, huge negative space.
+\newcommand{\DirectivePageOne}{%
+  \cleardoublepage
+  \thispagestyle{empty}
+  \vspace*{\fill}
+  \begin{center}
+  {\fontsize{9}{11}\selectfont cunt}
+  \end{center}
+  \vspace*{\fill}
+}
+
+% Aphorism page: ONLY sans-serif exception (typeface TBD later; using default sans for now)
+\newcommand{\SansAphorismEntry}[4]{% lens, link, question, text
+  \clearpage
+  \ifnotesedition
+    \VersoTriplet{#1}{#2}{#3}
+  \else
+    \BlankVerso
+  \fi
+  \cleardoublepage
+  \thispagestyle{empty}
+  \vspace*{\fill}
+  \begin{center}
+  {\sffamily\fontsize{14}{16}\selectfont #4}
+  \end{center}
+  \vspace*{\fill}
+}
+
+\newcommand{\BlankVerso}{%
+  \thispagestyle{empty}%
+  \null
+  \clearpage
+}
+\newcommand{\EOERectoPage}{%
+  \thispagestyle{empty}%
+  \null
+  \vfill
+  \hfill
+  \includegraphics[width=9mm]{../common/assets/e-and-o-e-ligature.png}%
+  \hspace*{0pt}\par
+  \clearpage
+}

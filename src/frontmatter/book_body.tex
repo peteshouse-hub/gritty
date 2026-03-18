@@ -1,0 +1,48 @@
+% Book body. Edition flag must be set before inputting this file.
+\begin{document}
+
+% --- Title page ---
+\cleardoublepage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+{\Large The Gospel According to Tony Day\par}
+
+\ifnotesedition
+  \vspace{0.25\baselineskip}
+  {\small\itshape decoded\par}
+  \vspace{1.75\baselineskip}
+\else
+  \vspace{2\baselineskip}
+\fi
+
+{\small Pete Oliver\par}
+\end{center}
+\vspace*{\fill}
+\clearpage
+
+% Inside front cover intentionally blank in the naked edition.
+% In the decoded edition, use this verso to frame the opening directive page.
+\ifnotesedition
+  \VersoTriplet{%
+    \VLabel{Lens:}  Four small letters. No adornment. No status. Surrounded by blank space, the word is crushed into insignificance. If it still carried force, that force did not come from the page.%
+  }{%
+    \VLabel{Link:}  Reflex / Inheritance / Unexamined Prohibition.%
+  }{%
+  \VLabel{Question:}  How did this page make you feel, did that response arrive automatically, and where did that conditioning come from?%
+  }
+\else
+  \BlankVerso
+\fi
+
+% --- Page 1 directive ---
+\DirectivePageOne
+
+% --- Works (canonical order) ---
+\input{../works/manifest.tex}
+
+\clearpage
+\BlankVerso
+\EOERectoPage
+
+\end{document}
