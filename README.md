@@ -8,8 +8,6 @@ Two editions are produced from the same body of work:
 
 Both editions present the same work. The decoded edition is a companion reading, not a separate text.
 
-The layout is designed for two-page view (verso and recto). For optimal viewing of the PDF renditions switch your viewer to two-page mode.
-
 The intended reading order is:
 1. **Naked Edition**
 2. **Decoded Edition**
@@ -66,6 +64,8 @@ The output filenames are:
 - `The Gospel According to Tony Day - Decoded Edition.pdf`
 
 ### Direct PDF links
+
+The layout is designed for two-page view (verso and recto). For optimal viewing of the PDF renditions switch your viewer to two-page mode.
 
 - [Naked Edition](dist/The%20Gospel%20According%20to%20Tony%20Day%20-%20Naked%20Edition.pdf)
 - [Decoded Edition](dist/The%20Gospel%20According%20to%20Tony%20Day%20-%20Decoded%20Edition.pdf)
